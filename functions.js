@@ -40,27 +40,30 @@ function diceRolling(stringOfDice) {
 //
 /**
  * increases or decreases the turn counter by using the response(s) from the html form and action it within a case-switch statement
- * @param {Object} nextTurn - this will increase the turn counter
- * @param {Object} prevTurn - this will decrease the turn counter
+ * @param {"increase" |"decrease"} direction
+ * @param {number} increment
  * @param {number} currTurnNum - this will take the stored counter from the SQL table and we'll update it to the number that's returned
  * @return {number} turnCount will be returned as it will represent either an increase or decrease in the turn count
  */
-function turnCounter(turnAdjustment, currTurnNum) {
+function adjustTurnCounterInMemory(direction, increment, currTurnNum) {
   let newTurnNum;
-
-  if (turnAdjustment == "increase" && currTurnNum >= 0) {
-    newTurnNum = currTurnNum + 1;
+  if (currTurnNum < 0) {
+    return 0;
   }
 
-  if (turnAdjustment == "decrease" && currTurnNum >= 0) {
-    newTurnNum = currTurnNum - 1;
+  console.warn(adjustTurnCounterInMemory.name, {
+    direction,
+    increment,
+    currTurnNum,
+  });
+  if (direction == "increase") {
+    newTurnNum = currTurnNum + increment;
+  } else if (direction == "decrease") {
+    newTurnNum = Math.max(0, currTurnNum - increment);
+  } else {
+    throw new Error("unrecognised direction");
   }
-
-  if (currTurnNum <= 0) {
-    return (currTurnNum = 0);
-  }
-
   return newTurnNum;
 }
 
-module.exports = { diceRolling, turnCounter };
+module.exports = { diceRolling, adjustTurnCounterInMemory };

@@ -1,6 +1,6 @@
 const { app } = require("./support/setupExpress");
 const { query } = require("./support/db");
-const { diceRolling, turnCounter } = require("./functions");
+const { diceRolling, adjustTurnCounterInMemory } = require("./functions");
 
 ////////////////////////////
 
@@ -32,19 +32,46 @@ app.post("/tabledata", async (req, res) => {
 // MUST FIGURE OUT WHAT REQ.QUERY IS AND WHY IT COMES UP AS BLAHHH
 
 app.get("/points", async (req, res) => {
-  // displays current turn number
+  console.log({ "req.query": req.query });
+  if (!("direction" in req.query)) {
+    showStartingPointsPage(req, res);
+  } else {
+    processPointsUpdateAndShowUpdatedPage(req, res);
+  }
+});
+
+async function getCurrentTurnNumber(req) {
   const dbResult = await query("SELECT turnNum from turn_number");
   const dbArray = dbResult.rows;
-  const currTurnNum = dbArray[0].turnnum;
+  return dbArray[0].turnnum;
+}
+
+async function showStartingPointsPage(req, res) {
+  const currTurnNum = await getCurrentTurnNumber(req);
+  res.render("points", { currTurnNum });
+}
+
+async function processPointsUpdateAndShowUpdatedPage(req, res) {
+  const currTurnNum = await getCurrentTurnNumber(req);
 
   // takes query from page and determines if increase or decrease
-  let turnAdjustment = req.query;
+  let direction = req.query.direction?.toString() ?? "";
+  let increment = parseInt(req.query.increment?.toString() ?? "");
+
+  //validate user input: req.query could contain ANYTHING from a malicious user.
+  if (direction !== "increase" && direction !== "decrease") {
+    res.status(400).send("bad direction" + direction);
+    return;
+  }
+
+  if (isNaN(increment)) {
+    return res.status(400).send("bad increment" + increment);
+  }
 
   // increases or decreases the turn number
-  let newTurnNum = turnCounter(turnAdjustment, currTurnNum);
+  let newTurnNum = adjustTurnCounterInMemory(direction, increment, currTurnNum);
 
-  console.log("OUTCOMEEEEE: ", turnAdjustment);
-
+  console.log({ where: "in app.js", newTurnNum });
   // inserts into turn table
   await query("UPDATE turn_number SET turnNum = $1 WHERE turnNum = $2", [
     newTurnNum,
@@ -52,7 +79,7 @@ app.get("/points", async (req, res) => {
   ]);
 
   res.render("points", { currTurnNum });
-});
+}
 
 ////////////////////////////
 

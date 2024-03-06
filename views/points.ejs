@@ -1,39 +1,43 @@
-<nav>
-  <h1>navigation</h1>
-  <ul>
-    <li><a href="/points">points tracker</a></li>
-    <li><a href="/diceroll">roll dice</a></li>
-  </ul>
-</nav>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
-  <title>Main Page</title>
-  <!-- <link rel="stylesheet" href="styles.css" /> -->
-  <script src="app.js" defer></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
 </head>
 
 <body>
+  <nav>
+    <h1>navigation</h1>
+    <ul>
+      <li><a href="/points">points tracker</a></li>
+      <li><a href="/diceroll">roll dice</a></li>
+    </ul>
+  </nav>
+
   <!-- turn counter -->
   <div class="turn counter">
     <form action="/points" method="GET">
-      <input type="hidden" name="decrease" placeholder="decrease turn" />
+      <input type="hidden" name="direction" value="decrease" />
+      <input type="hidden" name="increment" value="1" />
       <button type="submit">decrease</button>
     </form>
     <p>turn number: <%= currTurnNum %></p>
     <form action="/points" method="GET">
-      <input type="hidden" name="increase" placeholder="increase turn" />
+      <input type="hidden" name="direction" value="increase" />
+      <input type="hidden" name="increment" value="1" />
       <button type="submit">increase</button>
     </form>
+  </div>
+  <!-- points display -->
+  <div id="points display"></div>
 
-    <!-- points display -->
-    <div id="points display">
-
-    </div>
-
+  <footer>
+    <ul>
+      <li><a href="/">start over</a></li>
+    </ul>
+  </footer>
 </body>
 
-<footer>
-  <ul>
-    <li><a href="/">start over</a></li>
-    <ul>
-</footer>
+</html>
