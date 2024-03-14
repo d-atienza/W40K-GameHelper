@@ -30,8 +30,79 @@
       <button type="submit">increase</button>
     </form>
   </div>
-  <!-- points display -->
-  <div id="points display"></div>
+
+  <style>
+    table {
+        width: 50%;
+        border-collapse: collapse;
+    }
+    th, td {
+        border: 1px solid #240dd1;
+        text-align: left;
+        padding: 8px;
+    }
+    th {
+        background-color: white;
+    }
+</style>
+
+  <h2>GAME ON</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Player</th>
+                <th>Primary Points</th>
+                <th>Secondary Points</th>
+                <th>Command Points</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% pointsTableDetails.forEach(function(player) { %>
+                <tr>
+                    <td><%= player.player %></td>
+                    <td> <div class="primaryPoints">
+                      <form action="/points" method="GET">
+                        <input type="hidden" name="direction" value="decrease" />
+                        <input type="hidden" name="increment" value="1" />
+                        <button type="submit">decrease</button>
+                      </form>
+                      <p>(Primary) <%= player.primaryPoints %></p>
+                      <form action="/points" method="GET">
+                        <input type="hidden" name="direction" value="increase" />
+                        <input type="hidden" name="increment" value="1" />
+                        <button type="submit">increase</button>
+                      </form>
+                    </div></td>
+                    <td><div class="secondaryPoints">
+                      <form action="/points" method="GET">
+                        <input type="hidden" name="direction" value="decrease" />
+                        <input type="hidden" name="increment" value="1" />
+                        <button type="submit">decrease</button>
+                      </form>
+                      <p>(Secondary) <%= player.secondaryPoints %></p>
+                      <form action="/points" method="GET">
+                        <input type="hidden" name="direction" value="increase" />
+                        <input type="hidden" name="increment" value="1" />
+                        <button type="submit">increase</button>
+                      </form>
+                    </div></td>
+                    <td><div class="commandPoints">
+                      <form action="/points" method="GET">
+                        <input type="hidden" name="direction" value="decrease" />
+                        <input type="hidden" name="increment" value="1" />
+                        <button type="submit">decrease</button>
+                      </form>
+                      <p>(Command) <%= player.commandPoints %></p>
+                      <form action="/points" method="GET">
+                        <input type="hidden" name="direction" value="increase" />
+                        <input type="hidden" name="increment" value="1" />
+                        <button type="submit">increase</button>
+                      </form>
+                    </div></td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
 
   <footer>
     <ul>

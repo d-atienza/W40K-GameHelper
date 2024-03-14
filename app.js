@@ -22,7 +22,7 @@ app.post("/tabledata", async (req, res) => {
     [player1, player2]
   ); // inserts into points table
 
-  await query("insert into turn_number (turnNum) values (0);"); // inserts into turn table
+  await query("insert into turn_number (turnNum) values (1);"); // inserts into turn table, begins at turn 1
 
   res.redirect("points");
 });
@@ -40,18 +40,25 @@ app.get("/points", async (req, res) => {
   }
 });
 
+//TURN COUNTER FUNCTIONS
+// grabs turn number from database
 async function getCurrentTurnNumber(req) {
   const dbResult = await query("SELECT turnNum from turn_number");
   const dbArray = dbResult.rows;
   return dbArray[0].turnnum;
 }
 
+// displays turn number as the page initially renders
 async function showStartingPointsPage(req, res) {
   const currTurnNum = await getCurrentTurnNumber(req);
-  res.render("points", { currTurnNum });
+  const pointsTableDetails = await getCurrentPointsNumbers(req);
+
+  res.render("points", { currTurnNum, pointsTableDetails });
 }
 
+// processes current turn number as it updates
 async function processPointsUpdateAndShowUpdatedPage(req, res) {
+  const pointsTableDetails = await getCurrentPointsNumbers(req);
   const currTurnNum = await getCurrentTurnNumber(req);
 
   // takes query from page and determines if increase or decrease
@@ -78,8 +85,23 @@ async function processPointsUpdateAndShowUpdatedPage(req, res) {
     currTurnNum,
   ]);
 
-  res.render("points", { currTurnNum });
+  res.render("points", { currTurnNum, pointsTableDetails });
 }
+
+////////////////////////////
+// GET POINTS FUNCTIONS (add these into the existing points page functions)
+// grabs points number from database
+async function getCurrentPointsNumbers(req) {
+  const dbResult = await query("SELECT * from points"); //pulls all the data including names!
+  const dbArray = dbResult.rows;
+  return dbArray; //NEED TO DOUBLECHECK
+}
+
+// displays points number as the page initially renders
+// async function showStartingPointsPage(req, res) {
+//   const pointsTableDetails = await getCurrentPointsNumbers(req);
+//   res.render("points", { pointsTableDetails });
+// }
 
 ////////////////////////////
 
